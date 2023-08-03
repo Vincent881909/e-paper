@@ -130,20 +130,17 @@ while True:
         font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
         font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
         
-        HBlackimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126
-        HRYimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
-        drawblack = ImageDraw.Draw(HBlackimage)
-        drawry = ImageDraw.Draw(HRYimage)
-        drawblack.text((55, 0), 'Currency Tracker', font = font18, fill = 0)
-
-
-        epd.display(epd.getbuffer(HBlackimage), epd.getbuffer(HRYimage))
+        #HBlackimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126
+        #HRYimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
+        #drawblack = ImageDraw.Draw(HBlackimage)
+        #drawry = ImageDraw.Draw(HRYimage)
+        #drawblack.text((60, 0), 'Currency Tracker', font = font18, fill = 0)
 
         logging.info("4.read bmp file on window")
         blackimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126
         redimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126    
         newimage = Image.open('exchange_rate.bmp')
-        blackimage1.paste(newimage, (10,0))    
+        blackimage1.paste(newimage, (0,10))    
         epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
 
     
