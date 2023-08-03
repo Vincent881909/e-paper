@@ -140,7 +140,9 @@ while True:
         blackimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126
         redimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126    
         newimage = Image.open('exchange_rate.bmp')
-        blackimage1.paste(newimage, (0,10))
+        blackimage1.paste(newimage, (0,25))
+        drawblack = ImageDraw.Draw(blackimage1)
+        drawblack.text((60, 0), 'Currency Tracker', font = font18, fill = 0)
         epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
 
     
