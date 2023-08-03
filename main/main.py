@@ -112,7 +112,7 @@ img = enhancer.enhance(2)
 img = img.convert('1', dither=Image.NONE)
 
 # Resize the image to the final size
-img = img.resize((296, 118))
+img = img.resize((296, 98))
 
 # Save the binary black-and-white, resized image as a BMP
 img.save('exchange_rate.bmp')
@@ -140,7 +140,7 @@ while True:
         blackimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126
         redimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126    
         newimage = Image.open('exchange_rate.bmp')
-        blackimage1.paste(newimage, (0,10))    
+        blackimage1.paste(newimage, (0,10))
         epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
 
     
