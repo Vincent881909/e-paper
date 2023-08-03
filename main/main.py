@@ -17,6 +17,7 @@ import traceback
 from waveshare_epd import epd2in9b_V3
 import matplotlib.pyplot as plt
 from PIL import Image, ImageEnhance, ImageFilter
+import datetime
 
 
 
