@@ -142,7 +142,7 @@ while True:
         newimage = Image.open('exchange_rate.bmp')
         blackimage1.paste(newimage, (0,25))
         drawblack = ImageDraw.Draw(blackimage1)
-        drawblack.text((60, 0), 'Currency Tracker', font = font18, fill = 0)
+        drawblack.text((70, 0), '4-Week Trend', font = font18, fill = 0)
         epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
 
     
