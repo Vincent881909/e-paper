@@ -52,70 +52,70 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 
-API_KEY1 = '8137072dc2801b3010638855a4faefbb'
-base = 'EUR'
-symbols = 'ZAR'
+# API_KEY1 = '8137072dc2801b3010638855a4faefbb'
+# base = 'EUR'
+# symbols = 'ZAR'
 
-# Today's date
-end_date = datetime.date.today()
+# # Today's date
+# end_date = datetime.date.today()
 
-# Starting date (4 weeks ago)
-start_date = end_date - datetime.timedelta(weeks=3)
+# # Starting date (4 weeks ago)
+# start_date = end_date - datetime.timedelta(weeks=3)
 
-# Number of days between start and end date
-num_days = (end_date - start_date).days
+# # Number of days between start and end date
+# num_days = (end_date - start_date).days
 
-# Lists to store dates and exchange rates
-dates = []
-exchange_rates = []
+# # Lists to store dates and exchange rates
+# dates = []
+# exchange_rates = []
 
-# Loop through the past 28 days (4 weeks)
-for day in range(num_days):
-    # Calculate the date for this iteration
-    current_date = start_date + datetime.timedelta(days=day)
+# # Loop through the past 28 days (4 weeks)
+# for day in range(num_days):
+#     # Calculate the date for this iteration
+#     current_date = start_date + datetime.timedelta(days=day)
     
-    # Create the URL for this date
-    URL = f'http://api.exchangeratesapi.io/v1/{current_date}?access_key={API_KEY1}&base={base}&symbols={symbols}'
+#     # Create the URL for this date
+#     URL = f'http://api.exchangeratesapi.io/v1/{current_date}?access_key={API_KEY1}&base={base}&symbols={symbols}'
     
-    # Make the request
-    request = requests.get(URL)
-    request.raise_for_status()  
-    data = request.json()
+#     # Make the request
+#     request = requests.get(URL)
+#     request.raise_for_status()  
+#     data = request.json()
 
-    # Add the date and exchange rate to our lists
-    dates.append(current_date)
-    exchange_rates.append(data['rates'][symbols])
-
-
+#     # Add the date and exchange rate to our lists
+#     dates.append(current_date)
+#     exchange_rates.append(data['rates'][symbols])
 
 
-# Create a plot of exchange rates over time
-fig, ax = plt.subplots(dpi=300)  # Set DPI at creation time
-ax.plot(dates, exchange_rates, marker='o')
 
-# Hide axes, labels, and title
-ax.axis('off')
 
-plt.grid(False)
+# # Create a plot of exchange rates over time
+# fig, ax = plt.subplots(dpi=300)  # Set DPI at creation time
+# ax.plot(dates, exchange_rates, marker='o')
 
-# Save the figure as a grayscale PNG with increased DPI
-plt.savefig('exchange_rate.png', dpi=300, bbox_inches='tight', pad_inches=0)
+# # Hide axes, labels, and title
+# ax.axis('off')
 
-# Open the image file
-img = Image.open('exchange_rate.png').convert('L')  # Convert to grayscale
+# plt.grid(False)
 
-# Enhance contrast to prepare for binary conversion
-enhancer = ImageEnhance.Contrast(img)
-img = enhancer.enhance(2)
+# # Save the figure as a grayscale PNG with increased DPI
+# plt.savefig('exchange_rate.png', dpi=300, bbox_inches='tight', pad_inches=0)
 
-# Binarize the image using Floyd-Steinberg dithering
-img = img.convert('1', dither=Image.NONE)
+# # Open the image file
+# img = Image.open('exchange_rate.png').convert('L')  # Convert to grayscale
 
-# Resize the image to the final size
-img = img.resize((296, 98))
+# # Enhance contrast to prepare for binary conversion
+# enhancer = ImageEnhance.Contrast(img)
+# img = enhancer.enhance(2)
 
-# Save the binary black-and-white, resized image as a BMP
-img.save('exchange_rate.bmp')
+# # Binarize the image using Floyd-Steinberg dithering
+# img = img.convert('1', dither=Image.NONE)
+
+# # Resize the image to the final size
+# img = img.resize((296, 98))
+
+# # Save the binary black-and-white, resized image as a BMP
+# img.save('exchange_rate.bmp')
 
 
 while True:
@@ -129,22 +129,23 @@ while True:
         
         font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
         font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
-        font2 = ImageFont.truetype(os.path.join(picdir, 'Font2.ttf'), 24)
+        font2 = ImageFont.truetype(os.path.join(picdir, 'Font2.ttf'), 8) 
         
-        #HBlackimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126
-        #HRYimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
-        #drawblack = ImageDraw.Draw(HBlackimage)
-        #drawry = ImageDraw.Draw(HRYimage)
-        #drawblack.text((60, 0), 'Currency Tracker', font = font18, fill = 0)
+        HBlackimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126
+        HRYimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
+        drawblack = ImageDraw.Draw(HBlackimage)
+        drawry = ImageDraw.Draw(HRYimage)
+        drawblack.text((0, 0), 'Currency Tracker', font = font2, fill = 0)
+        epd.display(epd.getbuffer(HBlackimage), epd.getbuffer(HRYimage))
 
-        logging.info("4.read bmp file on window")
-        blackimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126
-        redimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126    
-        newimage = Image.open('exchange_rate.bmp')
-        blackimage1.paste(newimage, (0,25))
-        drawblack = ImageDraw.Draw(blackimage1)
-        drawblack.text((100, 0), '4-Week Trend', font = font2, fill = 0)
-        epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
+        # logging.info("4.read bmp file on window")
+        # blackimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126
+        # redimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126    
+        # newimage = Image.open('exchange_rate.bmp')
+        # blackimage1.paste(newimage, (0,25))
+        # drawblack = ImageDraw.Draw(blackimage1)
+        # drawblack.text((100, 0), '4-Week Trend', font = font2, fill = 0)
+        # epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
 
     
         #drawblack.text((10, 10), get_conversion('ZAR'), font = font18, fill = 0)
