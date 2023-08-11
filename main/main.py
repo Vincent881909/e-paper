@@ -129,6 +129,7 @@ while True:
         
         font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
         font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
+        font2 = ImageFont.truetype(os.path.join(picdir, 'Font2.ttf'), 24)
         
         #HBlackimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126
         #HRYimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
@@ -142,7 +143,7 @@ while True:
         newimage = Image.open('exchange_rate.bmp')
         blackimage1.paste(newimage, (0,25))
         drawblack = ImageDraw.Draw(blackimage1)
-        drawblack.text((70, 0), '4-Week Trend', font = font18, fill = 0)
+        drawblack.text((100, 0), '4-Week Trend', font = font2, fill = 0)
         epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
 
     
