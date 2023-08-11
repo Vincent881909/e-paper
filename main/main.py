@@ -11,7 +11,7 @@ if os.path.exists(libdir):
 
 from PIL import Image,ImageDraw,ImageFont
 import requests
-from datetime import timedelta, datetime
+import datetime
 import time
 import traceback
 from waveshare_epd import epd2in9b_V3
@@ -41,81 +41,57 @@ def get_conversion(target_currency):
     data = response.json()
     conversion_rate = data['conversion_rate']
     TIME_STAMP = data['time_last_update_unix']
-    return f"1 {currency_symbols[BASE_CURRENCY]} equates to {conversion_rate} {currency_symbols[target_currency]}"
+    return f"{conversion_rate} {currency_symbols[target_currency]}"
 
 def date_of_conversion():
-    date_object = datetime.fromtimestamp(TIME_STAMP)
-    date = date_object.strftime('%d-%m-%Y')
-    return f"Time of conversion: {date}"
+    date_object = datetime.datetime.fromtimestamp(TIME_STAMP)
+    date = date_object.strftime('%a %d %B %Y')
+    return f"{date}"
 
 logging.basicConfig(level=logging.DEBUG)
 
 
 
-# API_KEY1 = '8137072dc2801b3010638855a4faefbb'
-# base = 'EUR'
-# symbols = 'ZAR'
+API_KEY1 = '8137072dc2801b3010638855a4faefbb'
+base = 'EUR'
+symbols = 'ZAR'
 
-# # Today's date
-# end_date = datetime.date.today()
+end_date = datetime.date.today()
 
-# # Starting date (4 weeks ago)
-# start_date = end_date - datetime.timedelta(weeks=3)
+start_date = end_date - datetime.timedelta(weeks=4)
 
-# # Number of days between start and end date
-# num_days = (end_date - start_date).days
+num_days = (end_date - start_date).days
 
-# # Lists to store dates and exchange rates
-# dates = []
-# exchange_rates = []
+dates = []
+exchange_rates = []
 
-# # Loop through the past 28 days (4 weeks)
-# for day in range(num_days):
-#     # Calculate the date for this iteration
-#     current_date = start_date + datetime.timedelta(days=day)
-    
-#     # Create the URL for this date
-#     URL = f'http://api.exchangeratesapi.io/v1/{current_date}?access_key={API_KEY1}&base={base}&symbols={symbols}'
-    
-#     # Make the request
-#     request = requests.get(URL)
-#     request.raise_for_status()  
-#     data = request.json()
+for day in range(num_days):
+    current_date = start_date + datetime.timedelta(days=day)
+    URL = f'http://api.exchangeratesapi.io/v1/{current_date}?access_key={API_KEY1}&base={base}&symbols={symbols}'
 
-#     # Add the date and exchange rate to our lists
-#     dates.append(current_date)
-#     exchange_rates.append(data['rates'][symbols])
+    request = requests.get(URL)
+    request.raise_for_status() 
+    data = request.json()
+    print("DATA=======\n")
+    print(data) 
+    dates.append(current_date)
+    exchange_rates.append(data['rates'][symbols])
 
 
 
+#Plotting the trend and saving it
+fig, ax = plt.subplots(dpi=300)  # Set DPI at creation time
+ax.plot(dates, exchange_rates, marker='o')
+ax.axis('off')
+plt.grid(False)
 
-# # Create a plot of exchange rates over time
-# fig, ax = plt.subplots(dpi=300)  # Set DPI at creation time
-# ax.plot(dates, exchange_rates, marker='o')
-
-# # Hide axes, labels, and title
-# ax.axis('off')
-
-# plt.grid(False)
-
-# # Save the figure as a grayscale PNG with increased DPI
-# plt.savefig('exchange_rate.png', dpi=300, bbox_inches='tight', pad_inches=0)
-
-# # Open the image file
-# img = Image.open('exchange_rate.png').convert('L')  # Convert to grayscale
-
-# # Enhance contrast to prepare for binary conversion
-# enhancer = ImageEnhance.Contrast(img)
-# img = enhancer.enhance(2)
-
-# # Binarize the image using Floyd-Steinberg dithering
-# img = img.convert('1', dither=Image.NONE)
-
-# # Resize the image to the final size
-# img = img.resize((296, 98))
-
-# # Save the binary black-and-white, resized image as a BMP
-# img.save('exchange_rate.bmp')
+plt.savefig('exchange_rate.png', dpi=300, bbox_inches='tight', pad_inches=0)
+img = Image.open('exchange_rate.png').convert('L')  # Convert to grayscale
+enhancer = ImageEnhance.Contrast(img)
+img = enhancer.enhance(2)
+img = img.convert('1', dither=Image.NONE)
+img = img.resize((200, 68))
+img.save('exchange_rate.bmp')
 
 
 while True:
@@ -126,31 +102,31 @@ while True:
         epd.init()
         epd.Clear()
         time.sleep(1)
+         
+        Varela_round = ImageFont.truetype(os.path.join(picdir, 'Varela_Round.ttf'), 18) 
+        Bold = ImageFont.truetype(os.path.join(picdir, 'IBM.ttf'), 24) 
         
-        font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
-        font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
-        font2 = ImageFont.truetype(os.path.join(picdir, 'Font2.ttf'), 8) 
-        
-        HBlackimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126
-        HRYimage = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
-        drawblack = ImageDraw.Draw(HBlackimage)
-        drawry = ImageDraw.Draw(HRYimage)
-        drawblack.text((0, 0), 'Currency Tracker', font = font2, fill = 0)
-        epd.display(epd.getbuffer(HBlackimage), epd.getbuffer(HRYimage))
+        black_image = Image.new('1', (epd.height, epd.width), 255)  # 298*126
+        red_image = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
+        draw_black = ImageDraw.Draw(black_image)
+        draw_red = ImageDraw.Draw(red_image)
 
-        # logging.info("4.read bmp file on window")
-        # blackimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126
-        # redimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126    
-        # newimage = Image.open('exchange_rate.bmp')
-        # blackimage1.paste(newimage, (0,25))
-        # drawblack = ImageDraw.Draw(blackimage1)
-        # drawblack.text((100, 0), '4-Week Trend', font = font2, fill = 0)
-        # epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
+        #Left Hand Side View
+        draw_black.rectangle((0, 0,75, 126), fill = 0)
+        draw_black.text((18, 23), 'EUR', font = Bold, fill = 1)
+        draw_black.text((18, 72), 'ZAR', font = Bold, fill = 1)
 
-    
-        #drawblack.text((10, 10), get_conversion('ZAR'), font = font18, fill = 0)
-        #drawblack.text((10, 40), get_conversion('CAD'), font = font18, fill = 0)
-        #drawblack.text((10, 100), date_of_conversion(), font = font18, fill = 0)
+        #Conversion Rate
+        draw_red.text((145, 104), get_conversion('ZAR'), font = Varela_round, fill = 0)
+
+        #Conversion Time
+        draw_black.text((110, 10), date_of_conversion(), font = Varela_round, fill = 0)
+
+        #Currency Trend
+        newimage = Image.open('exchange_rate.bmp')
+        black_image.paste(newimage, (85,30))
+
+        epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
   
         #time.sleep(86400) # Upate every 24h 
         #time.sleep(43200) # Upate every 12h 
