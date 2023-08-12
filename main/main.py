@@ -40,6 +40,7 @@ def get_conversion(target_currency):
     response.raise_for_status()  
     data = response.json()
     conversion_rate = data['conversion_rate']
+    conversion_rate = round(conversion_rate,2)
     TIME_STAMP = data['time_last_update_unix']
     return f"{conversion_rate} {currency_symbols[target_currency]}"
 
@@ -58,7 +59,7 @@ symbols = 'ZAR'
 
 end_date = datetime.date.today()
 
-start_date = end_date - datetime.timedelta(weeks=1)
+start_date = end_date - datetime.timedelta(weeks=4)
 
 num_days = (end_date - start_date).days
 
@@ -72,8 +73,6 @@ for day in range(num_days):
     request = requests.get(URL)
     request.raise_for_status() 
     data = request.json()
-    print("DATA=======\n")
-    print(data) 
     dates.append(current_date)
     exchange_rates.append(data['rates'][symbols])
 
@@ -92,6 +91,30 @@ img = enhancer.enhance(2)
 img = img.convert('1', dither=Image.NONE)
 img = img.resize((200, 65))
 img.save('exchange_rate.bmp')
+
+def trend_value():
+    todays_date = datetime.date.today()
+    start_date = todays_date - datetime.timedelta(weeks=4)
+
+    URL = f'http://api.exchangeratesapi.io/v1/{start_date}?access_key={API_KEY1}&base={base}&symbols={symbols}'
+    request = requests.get(URL)
+    request.raise_for_status() 
+    data = request.json()
+    old_rate = data['rates'][symbols]
+
+    URL = f'http://api.exchangeratesapi.io/v1/{todays_date}?access_key={API_KEY1}&base={base}&symbols={symbols}'
+    request = requests.get(URL)
+    request.raise_for_status() 
+    data = request.json()
+    todays_rate = data['rates'][symbols]
+
+
+    trend = ((todays_rate - old_rate) / old_rate) * 100
+
+    return round(trend,2)
+
+
+
 
 
 while True:
@@ -118,7 +141,14 @@ while True:
         draw_black.text((15, 72), 'ZAR', font = IBM_24, fill = 1)
 
         #Conversion Rate
-        draw_red.text((145, 104), get_conversion('ZAR'), font = IBM_18, fill = 0)
+        if trend_value() >= 0:
+            draw_black.text((205, 106), f'+{trend_value()} %', font = Varela_round, fill = 0)
+            draw_black.text((105, 104), get_conversion('ZAR'), font = IBM_18, fill = 0)
+        else:
+            draw_black.text((205, 106), f'{trend_value()} %', font = Varela_round, fill = 0)
+            draw_red.text((105, 104), get_conversion('ZAR'), font = IBM_18, fill = 0)
+
+
 
         #Conversion Time
         draw_black.text((105, 10), date_of_conversion(), font = IBM_18, fill = 0)
