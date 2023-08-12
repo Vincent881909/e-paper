@@ -58,7 +58,7 @@ symbols = 'ZAR'
 
 end_date = datetime.date.today()
 
-start_date = end_date - datetime.timedelta(weeks=4)
+start_date = end_date - datetime.timedelta(weeks=1)
 
 num_days = (end_date - start_date).days
 
@@ -90,7 +90,7 @@ img = Image.open('exchange_rate.png').convert('L')  # Convert to grayscale
 enhancer = ImageEnhance.Contrast(img)
 img = enhancer.enhance(2)
 img = img.convert('1', dither=Image.NONE)
-img = img.resize((200, 68))
+img = img.resize((200, 65))
 img.save('exchange_rate.bmp')
 
 
@@ -104,7 +104,8 @@ while True:
         time.sleep(1)
          
         Varela_round = ImageFont.truetype(os.path.join(picdir, 'Varela_Round.ttf'), 18) 
-        Bold = ImageFont.truetype(os.path.join(picdir, 'IBM.ttf'), 24) 
+        IBM_24 = ImageFont.truetype(os.path.join(picdir, 'IBM.ttf'), 24)
+        IBM_18 = ImageFont.truetype(os.path.join(picdir, 'IBM.ttf'), 18) 
         
         black_image = Image.new('1', (epd.height, epd.width), 255)  # 298*126
         red_image = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
@@ -113,18 +114,18 @@ while True:
 
         #Left Hand Side View
         draw_black.rectangle((0, 0,75, 126), fill = 0)
-        draw_black.text((18, 23), 'EUR', font = Bold, fill = 1)
-        draw_black.text((18, 72), 'ZAR', font = Bold, fill = 1)
+        draw_black.text((15, 23), 'EUR', font = IBM_24, fill = 1)
+        draw_black.text((15, 72), 'ZAR', font = IBM_24, fill = 1)
 
         #Conversion Rate
-        draw_red.text((145, 104), get_conversion('ZAR'), font = Varela_round, fill = 0)
+        draw_red.text((145, 104), get_conversion('ZAR'), font = IBM_18, fill = 0)
 
         #Conversion Time
-        draw_black.text((110, 10), date_of_conversion(), font = Varela_round, fill = 0)
+        draw_black.text((105, 10), date_of_conversion(), font = IBM_18, fill = 0)
 
         #Currency Trend
         newimage = Image.open('exchange_rate.bmp')
-        black_image.paste(newimage, (85,30))
+        black_image.paste(newimage, (85,36))
 
         epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
   
