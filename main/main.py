@@ -20,7 +20,6 @@ from PIL import Image, ImageEnhance, ImageFilter
 import datetime
 
 
-
 # Setup Currecncy API
 API_KEY = "60d868a310906f1923f9b632"
 BASE_CURRENCY = "EUR"
@@ -58,11 +57,8 @@ base = 'EUR'
 symbols = 'ZAR'
 
 end_date = datetime.date.today()
-
 start_date = end_date - datetime.timedelta(weeks=4)
-
 num_days = (end_date - start_date).days
-
 dates = []
 exchange_rates = []
 
@@ -113,9 +109,9 @@ def trend_value():
 
     return round(trend,2)
 
-
-
-
+VARELA_ROOUND_18 = ImageFont.truetype(os.path.join(picdir, 'Varela_Round.ttf'), 18) 
+IBM_24 = ImageFont.truetype(os.path.join(picdir, 'IBM.ttf'), 24)
+IBM_18 = ImageFont.truetype(os.path.join(picdir, 'IBM.ttf'), 18) 
 
 while True:
 
@@ -125,10 +121,6 @@ while True:
         epd.init()
         epd.Clear()
         time.sleep(1)
-         
-        Varela_round = ImageFont.truetype(os.path.join(picdir, 'Varela_Round.ttf'), 18) 
-        IBM_24 = ImageFont.truetype(os.path.join(picdir, 'IBM.ttf'), 24)
-        IBM_18 = ImageFont.truetype(os.path.join(picdir, 'IBM.ttf'), 18) 
         
         black_image = Image.new('1', (epd.height, epd.width), 255)  # 298*126
         red_image = Image.new('1', (epd.height, epd.width), 255)  # 298*126  ryimage: red  
@@ -142,13 +134,11 @@ while True:
 
         #Conversion Rate
         if trend_value() >= 0:
-            draw_black.text((205, 106), f'+{trend_value()} %', font = Varela_round, fill = 0)
+            draw_black.text((205, 106), f'+{trend_value()} %', font = VARELA_ROOUND_18, fill = 0)
             draw_black.text((105, 104), get_conversion('ZAR'), font = IBM_18, fill = 0)
         else:
-            draw_black.text((205, 106), f'{trend_value()} %', font = Varela_round, fill = 0)
+            draw_black.text((205, 106), f'{trend_value()} %', font = VARELA_ROOUND_18, fill = 0)
             draw_red.text((105, 104), get_conversion('ZAR'), font = IBM_18, fill = 0)
-
-
 
         #Conversion Time
         draw_black.text((105, 10), date_of_conversion(), font = IBM_18, fill = 0)
