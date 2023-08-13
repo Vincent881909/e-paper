@@ -51,5 +51,3 @@ def trend_value(weeks_duration):
     todays_rate = get_exchange_rate(todays_date)[0]
     trend = ((todays_rate - old_rate) / old_rate) * 100
     return round(trend,2)
-
-
