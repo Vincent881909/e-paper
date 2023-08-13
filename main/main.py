@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 import matplotlib.pyplot as plt
 
 # Directories
-PIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'pic')
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'assets')
 LIB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 if os.path.exists(LIB_DIR):
     sys.path.append(LIB_DIR)
@@ -29,9 +29,9 @@ CURRENCY_SYMBOLS = {
     'USD': '\u0024'   # United States Dollar
 }
 
-VARELA_ROUND_18 = ImageFont.truetype(os.path.join(PIC_DIR, 'Varela_Round.ttf'), 18) 
-IBM_24 = ImageFont.truetype(os.path.join(PIC_DIR, 'IBM.ttf'), 24)
-IBM_18 = ImageFont.truetype(os.path.join(PIC_DIR, 'IBM.ttf'), 18) 
+VARELA_ROUND_18 = ImageFont.truetype(os.path.join(ASSETS_DIR, 'Varela_Round.ttf'), 18) 
+IBM_24 = ImageFont.truetype(os.path.join(ASSETS_DIR, 'IBM.ttf'), 24)
+IBM_18 = ImageFont.truetype(os.path.join(ASSETS_DIR, 'IBM.ttf'), 18) 
 
 def timestamp_to_date(timestamp):
     date = datetime.datetime.fromtimestamp(timestamp)
