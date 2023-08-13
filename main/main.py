@@ -22,7 +22,7 @@ from waveshare_epd import epd2in9b_V3
 # E-paper dimensions: 298x126
 
 # Setup Currecncy API
-API_KEY = '8137072dc2801b3010638855a4faefbb'
+API_KEY = os.environ.get('CURRENCY_API_KEY')
 BASE_CURRENCY = "EUR"
 TARGET_CURRENCY = "ZAR"
 TREND_IN_WEEKS = 4
