@@ -18,22 +18,18 @@ if os.path.exists(LIB_DIR):
 
 from waveshare_epd import epd2in9b_V3
 
-# E-paper dimensions: 298x126
-
-# Setup Currecncy API
 API_KEY = os.environ.get('CURRENCY_API_KEY')
 BASE_CURRENCY = "EUR"
 TARGET_CURRENCY = "ZAR"
 TREND_IN_WEEKS = 4
 CURRENCY_SYMBOLS = {
-    'ZAR': '\u0052',  # South African Rand - U+0052
-    'CAD': '\u0024',  # Canadian Dollar - U+0024
-    'EUR': '\u20AC',  # Euro - U+20AC
-    'USD': '\u0024'   # United States Dollar - U+0024
+    'ZAR': '\u0052',  # South African Rand 
+    'CAD': '\u0024',  # Canadian Dollar
+    'EUR': '\u20AC',  # Euro
+    'USD': '\u0024'   # United States Dollar
 }
 
-# Init Fonts
-VARELA_ROOUND_18 = ImageFont.truetype(os.path.join(PIC_DIR, 'Varela_Round.ttf'), 18) 
+VARELA_ROUND_18 = ImageFont.truetype(os.path.join(PIC_DIR, 'Varela_Round.ttf'), 18) 
 IBM_24 = ImageFont.truetype(os.path.join(PIC_DIR, 'IBM.ttf'), 24)
 IBM_18 = ImageFont.truetype(os.path.join(PIC_DIR, 'IBM.ttf'), 18) 
 
@@ -75,6 +71,7 @@ def create_plot(exchange_rates, dates):
     ax.axis('off')
     plt.grid(False)
     plt.savefig('currency_trend.png', dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
 
 
 def conduct_image_processing():
@@ -101,7 +98,7 @@ def seconds_until_midnight():
     return int((midnight - now).total_seconds())
 
 if __name__ == "__main__":
-    
+
     while True:
 
         try:
@@ -117,27 +114,26 @@ if __name__ == "__main__":
             draw_black = ImageDraw.Draw(black_image)
             draw_red = ImageDraw.Draw(red_image)
 
-            #Left Hand Side View
             draw_black.rectangle((0, 0,75, 126), fill = 0)
             draw_black.text((15, 23), BASE_CURRENCY, font = IBM_24, fill = 1)
             draw_black.text((15, 72), TARGET_CURRENCY, font = IBM_24, fill = 1)
 
-            #Conversion Rate
             rate_trend_percentage = trend_value(TREND_IN_WEEKS)
             current_exchange_rate = get_exchange_rate(datetime.datetime.now())
-        
+    
             if rate_trend_percentage >= 0:
-                draw_black.text((205, 106), f'+{rate_trend_percentage} %', font = VARELA_ROOUND_18, fill = 0)
-                draw_black.text((105, 104), f'{str(current_exchange_rate[0])} {CURRENCY_SYMBOLS[TARGET_CURRENCY]}', font = IBM_18, fill = 0)
+                trend_sign = '+'
+                color = draw_black
             else:
-                draw_black.text((205, 106), f'{rate_trend_percentage} %', font = VARELA_ROOUND_18, fill = 0)
-                draw_red.text((105, 104), f'{str(current_exchange_rate[0])} {CURRENCY_SYMBOLS[TARGET_CURRENCY]}', font = IBM_18, fill = 0)
+                trend_sign = ''
+                color = draw_red
 
-            #Conversion Time
+            draw_black.text((205, 106), f'{trend_sign}{rate_trend_percentage} %', font=VARELA_ROUND_18, fill=0)
+            color.text((105, 104), f'{str(current_exchange_rate[0])} {CURRENCY_SYMBOLS[TARGET_CURRENCY]}', font=IBM_18, fill=0)
+
             date_of_conversion = current_exchange_rate[1]
             draw_black.text((105, 10), date_of_conversion, font = IBM_18, fill = 0)
 
-            #Currency Trend
             currency_trend = fetch_currency_trend(TREND_IN_WEEKS)
             values = currency_trend[0]
             dates = currency_trend[1]
@@ -147,7 +143,7 @@ if __name__ == "__main__":
             black_image.paste(trend_img, (85,36))
 
             epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
-            time.sleep(seconds_until_midnight())
+            time.sleep(seconds_until_midnight()) #Scrip updates every night at midnight
                 
         except IOError as e:
             logging.info(e)
