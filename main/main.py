@@ -7,8 +7,7 @@ import sys
 import requests
 import datetime
 import time
-import traceback
-from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 import matplotlib.pyplot as plt
 
 # Directories
@@ -30,6 +29,7 @@ CURRENCY_SYMBOLS = {
     'ZAR': '\u0052',  # South African Rand - U+0052
     'CAD': '\u0024',  # Canadian Dollar - U+0024
     'EUR': '\u20AC',  # Euro - U+20AC
+    'USD': '\u0024'   # United States Dollar - U+0024
 }
 
 # Init Fonts
@@ -63,7 +63,6 @@ def fetch_currency_trend(weeks_duration):
         current_date = start_date + datetime.timedelta(days=day)
         exchange_rates.append(get_exchange_rate(current_date)[0])
         dates.append(current_date)
-        print(f'Trend: Fetching rate for date: {current_date}\n')
 
     return exchange_rates, dates
 
@@ -71,7 +70,7 @@ def create_plot(exchange_rates, dates):
     fig, ax = plt.subplots(dpi=300)  # Set DPI at creation time
     ax.plot(dates, exchange_rates, marker='o')
     ax.axis('off')
-    plt.grid(True)
+    plt.grid(False)
     plt.savefig('currency_trend.png', dpi=300, bbox_inches='tight', pad_inches=0)
 
 def conduct_image_processing():
@@ -85,7 +84,6 @@ def conduct_image_processing():
 def trend_value(weeks_duration):
     todays_date = datetime.date.today()
     start_date = todays_date - datetime.timedelta(weeks=weeks_duration)
-    print(f'Trend Value: Fetching rate for date: {todays_date} and {start_date}.\n')
     old_rate = get_exchange_rate(start_date)[0]
     todays_rate = get_exchange_rate(todays_date)[0]
     trend = ((todays_rate - old_rate) / old_rate) * 100
@@ -134,7 +132,7 @@ while True:
         draw_black.text((105, 10), date_of_conversion, font = IBM_18, fill = 0)
 
         #Currency Trend
-        currency_trend = fetch_currency_trend(4)
+        currency_trend = fetch_currency_trend(TREND_IN_WEEKS)
         values = currency_trend[0]
         dates = currency_trend[1]
         create_plot(values,dates)
