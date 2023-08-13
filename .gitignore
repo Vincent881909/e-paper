@@ -9,7 +9,8 @@ __pycache__/
 venv/
 
 # Temp data
-
 *.png
 *.bmp
 
+#VSC
+.vscode/
