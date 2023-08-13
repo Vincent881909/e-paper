@@ -16,7 +16,7 @@ LIB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__
 if os.path.exists(LIB_DIR):
     sys.path.append(LIB_DIR)
 
-from waveshare_epd import epd2in9b_V3
+import epd2in9b_V3
 
 API_KEY = os.environ.get('CURRENCY_API_KEY')
 BASE_CURRENCY = "EUR"
@@ -97,6 +97,15 @@ def seconds_until_midnight():
     midnight = datetime.datetime.combine(now.date() + datetime.timedelta(days=1), datetime.time())
     return int((midnight - now).total_seconds())
 
+
+def delete_png_bmp_files():
+    current_directory = os.getcwd()
+
+    for filename in os.listdir(current_directory):
+        if filename.endswith('.png') or filename.endswith('.bmp'):
+            os.remove(os.path.join(current_directory, filename))
+            print(f"Deleted: {filename}")
+
 if __name__ == "__main__":
 
     while True:
@@ -143,6 +152,8 @@ if __name__ == "__main__":
             black_image.paste(trend_img, (85,36))
 
             epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
+            delete_png_bmp_files()
+            
             time.sleep(seconds_until_midnight()) #Scrip updates every night at midnight
                 
         except IOError as e:
