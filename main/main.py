@@ -15,20 +15,6 @@ import epd2in9b_V3
 import currency_api
 import draw
 
-def seconds_until_midnight():
-    now = datetime.datetime.now()
-    midnight = datetime.datetime.combine(now.date() + datetime.timedelta(days=1), datetime.time())
-    return int((midnight - now).total_seconds())
-
-
-def delete_png_bmp_files():
-    current_directory = os.getcwd()
-
-    for filename in os.listdir(current_directory):
-        if filename.endswith('.png') or filename.endswith('.bmp'):
-            os.remove(os.path.join(current_directory, filename))
-            print(f"Deleted: {filename}")
-
 if __name__ == "__main__":
 
     while True:
@@ -52,9 +38,8 @@ if __name__ == "__main__":
             draw.date_of_conversion(draw_black,conversion_date)
             draw.trend_graph(currency_trend,black_image)
             epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
-            delete_png_bmp_files()
 
-            time.sleep(seconds_until_midnight()) #Scrip updates every night at midnight
+            time.sleep(currency_api.seconds_until_midnight()) #Scrip updates every night at midnight
                 
         except IOError as e:
             logging.info(e)

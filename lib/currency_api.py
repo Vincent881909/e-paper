@@ -51,3 +51,9 @@ def trend_value(weeks_duration):
     todays_rate = get_exchange_rate(todays_date)[0]
     trend = ((todays_rate - old_rate) / old_rate) * 100
     return round(trend,2)
+
+def seconds_until_midnight():
+    now = datetime.datetime.now()
+    midnight = datetime.datetime.combine(now.date() + datetime.timedelta(days=1), datetime.time())
+    return int((midnight - now).total_seconds())
+

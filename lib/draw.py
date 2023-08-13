@@ -63,3 +63,13 @@ def trend_graph(currency_trend, image_obj):
     conduct_image_processing()
     trend_img = Image.open('currency_trend.bmp')
     image_obj.paste(trend_img, (85,36))
+    delete_png_bmp_files()
+
+def delete_png_bmp_files():
+    current_directory = os.getcwd()
+
+    for filename in os.listdir(current_directory):
+        if filename.endswith('.png') or filename.endswith('.bmp'):
+            os.remove(os.path.join(current_directory, filename))
+            print(f"Deleted: {filename}")
+
