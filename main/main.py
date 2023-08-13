@@ -41,6 +41,7 @@ def timestamp_to_date(timestamp):
     date = datetime.datetime.fromtimestamp(timestamp)
     return date.strftime('%a %d %B %Y')
 
+
 def get_exchange_rate(date):
     date = date.strftime('%Y-%m-%d')
     url = f'http://api.exchangeratesapi.io/v1/{date}?access_key={API_KEY}&base={BASE_CURRENCY}&symbols={TARGET_CURRENCY}'
@@ -51,6 +52,7 @@ def get_exchange_rate(date):
     timestamp = received_data['timestamp']
     date = timestamp_to_date(timestamp)
     return round(exchange_rate,2), date
+
 
 def fetch_currency_trend(weeks_duration):
     end_date = datetime.datetime.now()
@@ -66,12 +68,14 @@ def fetch_currency_trend(weeks_duration):
 
     return exchange_rates, dates
 
+
 def create_plot(exchange_rates, dates):
     fig, ax = plt.subplots(dpi=300)  # Set DPI at creation time
     ax.plot(dates, exchange_rates, marker='o')
     ax.axis('off')
     plt.grid(False)
     plt.savefig('currency_trend.png', dpi=300, bbox_inches='tight', pad_inches=0)
+
 
 def conduct_image_processing():
     img = Image.open('currency_trend.png').convert('L')  # Convert to grayscale
@@ -81,6 +85,7 @@ def conduct_image_processing():
     img = img.resize((200, 65))
     img.save('currency_trend.bmp')
 
+
 def trend_value(weeks_duration):
     todays_date = datetime.date.today()
     start_date = todays_date - datetime.timedelta(weeks=weeks_duration)
@@ -89,64 +94,65 @@ def trend_value(weeks_duration):
     trend = ((todays_rate - old_rate) / old_rate) * 100
     return round(trend,2)
 
+
 def seconds_until_midnight():
     now = datetime.datetime.now()
     midnight = datetime.datetime.combine(now.date() + datetime.timedelta(days=1), datetime.time())
     return int((midnight - now).total_seconds())
 
+if __name__ == "__main__":
+    
+    while True:
 
-logging.basicConfig(level=logging.DEBUG)
-
-while True:
-
-    try:
-        epd = epd2in9b_V3.EPD()
-        logging.info("Init and Clear")
-        epd.init()
-        epd.Clear()
-        time.sleep(1)
-        
-        black_image = Image.new('1', (epd.height, epd.width), 255) 
-        red_image = Image.new('1', (epd.height, epd.width), 255)
-        draw_black = ImageDraw.Draw(black_image)
-        draw_red = ImageDraw.Draw(red_image)
-
-        #Left Hand Side View
-        draw_black.rectangle((0, 0,75, 126), fill = 0)
-        draw_black.text((15, 23), BASE_CURRENCY, font = IBM_24, fill = 1)
-        draw_black.text((15, 72), TARGET_CURRENCY, font = IBM_24, fill = 1)
-
-        #Conversion Rate
-        rate_trend_percentage = trend_value(TREND_IN_WEEKS)
-        current_exchange_rate = get_exchange_rate(datetime.datetime.now())
-      
-        if rate_trend_percentage >= 0:
-            draw_black.text((205, 106), f'+{rate_trend_percentage} %', font = VARELA_ROOUND_18, fill = 0)
-            draw_black.text((105, 104), f'{str(current_exchange_rate[0])} {CURRENCY_SYMBOLS[TARGET_CURRENCY]}', font = IBM_18, fill = 0)
-        else:
-            draw_black.text((205, 106), f'{rate_trend_percentage} %', font = VARELA_ROOUND_18, fill = 0)
-            draw_red.text((105, 104), f'{str(current_exchange_rate[0])} {CURRENCY_SYMBOLS[TARGET_CURRENCY]}', font = IBM_18, fill = 0)
-
-        #Conversion Time
-        date_of_conversion = current_exchange_rate[1]
-        draw_black.text((105, 10), date_of_conversion, font = IBM_18, fill = 0)
-
-        #Currency Trend
-        currency_trend = fetch_currency_trend(TREND_IN_WEEKS)
-        values = currency_trend[0]
-        dates = currency_trend[1]
-        create_plot(values,dates)
-        conduct_image_processing()
-        trend_img = Image.open('currency_trend.bmp')
-        black_image.paste(trend_img, (85,36))
-
-        epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
-        time.sleep(seconds_until_midnight())
+        try:
+            epd = epd2in9b_V3.EPD()
+            logging.basicConfig(level=logging.DEBUG)
+            logging.info("Init and Clear")
+            epd.init()
+            epd.Clear()
+            time.sleep(1)
             
-    except IOError as e:
-        logging.info(e)
+            black_image = Image.new('1', (epd.height, epd.width), 255) 
+            red_image = Image.new('1', (epd.height, epd.width), 255)
+            draw_black = ImageDraw.Draw(black_image)
+            draw_red = ImageDraw.Draw(red_image)
+
+            #Left Hand Side View
+            draw_black.rectangle((0, 0,75, 126), fill = 0)
+            draw_black.text((15, 23), BASE_CURRENCY, font = IBM_24, fill = 1)
+            draw_black.text((15, 72), TARGET_CURRENCY, font = IBM_24, fill = 1)
+
+            #Conversion Rate
+            rate_trend_percentage = trend_value(TREND_IN_WEEKS)
+            current_exchange_rate = get_exchange_rate(datetime.datetime.now())
         
-    except KeyboardInterrupt:    
-        logging.info("ctrl + c:")
-        epd2in9b_V3.epdconfig.module_exit()
-        exit()
+            if rate_trend_percentage >= 0:
+                draw_black.text((205, 106), f'+{rate_trend_percentage} %', font = VARELA_ROOUND_18, fill = 0)
+                draw_black.text((105, 104), f'{str(current_exchange_rate[0])} {CURRENCY_SYMBOLS[TARGET_CURRENCY]}', font = IBM_18, fill = 0)
+            else:
+                draw_black.text((205, 106), f'{rate_trend_percentage} %', font = VARELA_ROOUND_18, fill = 0)
+                draw_red.text((105, 104), f'{str(current_exchange_rate[0])} {CURRENCY_SYMBOLS[TARGET_CURRENCY]}', font = IBM_18, fill = 0)
+
+            #Conversion Time
+            date_of_conversion = current_exchange_rate[1]
+            draw_black.text((105, 10), date_of_conversion, font = IBM_18, fill = 0)
+
+            #Currency Trend
+            currency_trend = fetch_currency_trend(TREND_IN_WEEKS)
+            values = currency_trend[0]
+            dates = currency_trend[1]
+            create_plot(values,dates)
+            conduct_image_processing()
+            trend_img = Image.open('currency_trend.bmp')
+            black_image.paste(trend_img, (85,36))
+
+            epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
+            time.sleep(seconds_until_midnight())
+                
+        except IOError as e:
+            logging.info(e)
+            
+        except KeyboardInterrupt:    
+            logging.info("ctrl + c:")
+            epd2in9b_V3.epdconfig.module_exit()
+            exit()
