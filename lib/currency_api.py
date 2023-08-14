@@ -9,13 +9,16 @@ from logger import logger
 API_KEY = os.environ.get('CURRENCY_API_KEY')
 if not API_KEY: logger.error("CURRENCY_API_KEY environment variable not found!")
 
-curr_dir = os.path.dirname(os.path.realpath(__file__))
-root_dir = os.path.dirname(curr_dir)
-config_file_path = os.path.join(root_dir, "main", "config.cfg")
-config = configparser.ConfigParser()
-config.read(config_file_path)
-
 REDIS_CLIENT = redis.Redis(host='localhost', port=6379, db=0)
+
+def get_config_object():
+    curr_dir = os.path.dirname(os.path.realpath(__file__))
+    root_dir = os.path.dirname(curr_dir)
+    config_file_path = os.path.join(root_dir, "main", "config.cfg")
+    config = configparser.ConfigParser()
+
+    return config,config_file_path
+
 
 def timestamp_to_date(timestamp):
     date = datetime.datetime.fromtimestamp(timestamp)
@@ -24,6 +27,8 @@ def timestamp_to_date(timestamp):
 def get_exchange_rate(date):
     try:
         date = date.strftime('%Y-%m-%d')
+        config,config_file_path = get_config_object()
+        config.read(config_file_path)
         client_key = f'{config["DEFAULT"]["BASE_CURRENCY"]}:{config["DEFAULT"]["TARGET_CURRENCY"]}:{date}'
         data = REDIS_CLIENT.get(client_key)
 
@@ -70,7 +75,7 @@ def get_exchange_rate(date):
 
 
 def fetch_currency_trend(weeks_duration):
-    end_date = datetime.datetime.now()
+    end_date = datetime.datetime.now() - datetime.timedelta(days=1)
     start_date = end_date - datetime.timedelta(weeks=weeks_duration)
     num_days = (end_date - start_date).days
     dates = []
@@ -85,15 +90,10 @@ def fetch_currency_trend(weeks_duration):
 
 
 def trend_value(weeks_duration):
-    todays_date = datetime.date.today()
+    todays_date = datetime.date.today() - datetime.timedelta(days=1)
     start_date = todays_date - datetime.timedelta(weeks=weeks_duration)
     old_rate = get_exchange_rate(start_date)[0]
     todays_rate = get_exchange_rate(todays_date)[0]
     trend = ((todays_rate - old_rate) / old_rate) * 100
     return round(trend,2)
-
-def seconds_until_midnight():
-    now = datetime.datetime.now()
-    midnight = datetime.datetime.combine(now.date() + datetime.timedelta(days=1), datetime.time())
-    return int((midnight - now).total_seconds())
 
