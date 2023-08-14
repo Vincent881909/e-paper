@@ -36,10 +36,9 @@ def main_script():
         draw.date_of_conversion(draw_black,conversion_date)
         draw.trend_graph(currency_trend,black_image)
         epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
+        
         logger.info("Data has been displayed")
-
         logger.info("Script re-executed at midnight or until refreshed via web-gui")
-        time.sleep(currency_api.seconds_until_midnight()) #Scrip updates every night at midnight
             
     except IOError as e:
         logger.info(e)
