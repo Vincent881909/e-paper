@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Currency Configurator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <form action="/" method="post">
+            <label for="base_currency">Base Currency:</label>
+            <select name="base_currency">
+                <option value="EUR">EURO</option>
+                <option value="ZAR">ZAR</option>
+                <option value="USD">USD</option>
+                <option value="CAD">CAD</option>
+            </select>
+            
+            <label for="target_currency">Target Currency:</label>
+            <select name="target_currency">
+                <option value="EUR">EURO</option>
+                <option value="ZAR">ZAR</option>
+                <option value="USD">USD</option>
+                <option value="CAD">CAD</option>
+            </select>
+            
+            <input type="submit" value="Apply Settings">
+        </form>
+    </div>
+</body>
+</html>
