@@ -3,9 +3,9 @@ import datetime
 import requests
 
 API_KEY = os.environ.get('CURRENCY_API_KEY')
-BASE_CURRENCY = "EUR"
-TARGET_CURRENCY = "ZAR"
-TREND_IN_WEEKS = 4
+BASE_CURRENCY = "EUR" # Default Value
+TARGET_CURRENCY = "ZAR" # Default Value
+TREND_IN_WEEKS = 4 # Default Value
 CURRENCY_SYMBOLS = {
     'ZAR': '\u0052',  # South African Rand 
     'CAD': '\u0024',  # Canadian Dollar
