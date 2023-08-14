@@ -27,15 +27,14 @@
 # THE SOFTWARE.
 #
 
-
-import logging
 import epdconfig
+from logger import logger
+
 
 # Display resolution
 EPD_WIDTH       = 128
 EPD_HEIGHT      = 296
 
-logger = logging.getLogger(__name__)
 
 class EPD:
     def __init__(self):

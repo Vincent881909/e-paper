@@ -28,11 +28,9 @@
 #
 
 import os
-import logging
 import sys
 import time
-
-logger = logging.getLogger(__name__)
+from logger import logger
 
 
 class RaspberryPi:

@@ -3,8 +3,11 @@ import datetime
 import requests
 import redis
 import json
+from logger import logger
 
 API_KEY = os.environ.get('CURRENCY_API_KEY')
+if not API_KEY: logger.error("CURRENCY_API_KEY environment variable not found!")
+
 BASE_CURRENCY = "EUR" # Default Value
 TARGET_CURRENCY = "ZAR" # Default Value
 TREND_IN_WEEKS = 4 # Default Value
@@ -22,27 +25,51 @@ def timestamp_to_date(timestamp):
     return date.strftime('%a %d %B %Y')
 
 def get_exchange_rate(date):
-    date = date.strftime('%Y-%m-%d')
+    try:
+        date = date.strftime('%Y-%m-%d')
+        client_key = f'{BASE_CURRENCY}:{TARGET_CURRENCY}:{date}'
+        data = REDIS_CLIENT.get(client_key)
 
-    client_key = f'{BASE_CURRENCY}:{TARGET_CURRENCY}:{date}'
-    data = REDIS_CLIENT.get(client_key)
+        if data is None:
+            logger.debug(f'Client Key: {client_key} does not exist. API call initiated.')
+            url = f'http://api.exchangeratesapi.io/v1/{date}?access_key={API_KEY}&base={BASE_CURRENCY}&symbols={TARGET_CURRENCY}'
+            
+            response = requests.get(url)
+            response.raise_for_status()  
+            data = response.json()
+            
+            if 'rates' not in data or TARGET_CURRENCY not in data['rates']:
+                logger.error(f"Unexpected API response structure: {data}")
+                return None, None
 
-    if data is None:
-        print(f'Client Key: {client_key} does not exist. API call initiated.')
-        url = f'http://api.exchangeratesapi.io/v1/{date}?access_key={API_KEY}&base={BASE_CURRENCY}&symbols={TARGET_CURRENCY}'
-        request = requests.get(url)
-        request.raise_for_status()
-        data = request.json()
-        seconds_in_six_months = 6 * 30 * 24 * 60 * 60
-        REDIS_CLIENT.setex(client_key, seconds_in_six_months, json.dumps(data))
-    else:
-        print(f'Client Key: {client_key} exists. Caching used.')
-        data = json.loads(data)
+            seconds_in_six_months = 6 * 30 * 24 * 60 * 60
+            REDIS_CLIENT.setex(client_key, seconds_in_six_months, json.dumps(data))
+            
+        else:
+            logger.debug(f'Client Key: {client_key} exists. Caching used.')
+            data = json.loads(data)
 
-    exchange_rate = data['rates'][TARGET_CURRENCY]
-    timestamp = data['timestamp']
-    date = timestamp_to_date(timestamp)
-    return round(exchange_rate,2), date
+        exchange_rate = data['rates'][TARGET_CURRENCY]
+        timestamp = data['timestamp']
+        date = timestamp_to_date(timestamp)
+
+        return round(exchange_rate, 2), date
+
+    except requests.HTTPError as e:
+        logger.error(f"HTTP error occurred when fetching data for {date}: {e}")
+        return None, None
+    except requests.RequestException as e:
+        logger.error(f"Network error occurred: {e}")
+        return None, None
+    except json.JSONDecodeError as e:
+        logger.error(f"Error decoding JSON: {e}")
+        return None, None
+    except redis.RedisError as e:
+        logger.error(f"Redis error: {e}")
+        return None, None
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        return None, None
 
 
 def fetch_currency_trend(weeks_duration):
