@@ -1,34 +1,50 @@
 body {
-    background-color: #191970; /* MidnightBlue */
-    color: white;
     font-family: Arial, sans-serif;
-    text-align: center;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #191970; /* MidnightBlue background */
+    color: #FFF;
 }
 
 .container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #000033; /* A slightly different shade */
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    border-radius: 10px;
+    background-color: #001F3F;
+    box-shadow: 0 4px 16px rgba(0, 31, 63, 0.7);
 }
 
-label, select, input {
-    margin-bottom: 20px;
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    margin-bottom: 2px;
+}
+
+select {
+    padding: 10px;
+    background-color: #003366;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
     font-size: 16px;
 }
 
 input[type="submit"] {
-    background-color: #4a4a8d; /* Lighter MidnightBlue */
-    color: white;
     padding: 10px 20px;
+    background-color: #4CAF50; 
+    color: #FFF; 
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s ease;
 }
 
-input[type="submit"]:hover {
-    background-color: #333366; /* Slightly different shade on hover */
-}

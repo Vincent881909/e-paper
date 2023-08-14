@@ -7,22 +7,22 @@
 <body>
     <div class="container">
         <form action="/" method="post">
-            <label for="base_currency">Base Currency:</label>
-            <select name="base_currency">
-                <option value="EUR">EURO</option>
-                <option value="ZAR">ZAR</option>
-                <option value="USD">USD</option>
-                <option value="CAD">CAD</option>
-            </select>
-            
-            <label for="target_currency">Target Currency:</label>
-            <select name="target_currency">
-                <option value="EUR">EURO</option>
-                <option value="ZAR">ZAR</option>
-                <option value="USD">USD</option>
-                <option value="CAD">CAD</option>
-            </select>
-            
+            <label for="BASE_CURRENCY">Base Currency:</label>
+                <select name="BASE_CURRENCY">
+                    <option value="EUR" {{ 'selected' if base_currency == 'EUR' else '' }}>EURO</option>
+                    <option value="ZAR" {{ 'selected' if base_currency == 'ZAR' else '' }}>ZAR</option>
+                    <option value="USD" {{ 'selected' if base_currency == 'USD' else '' }}>USD</option>
+                    <option value="CAD" {{ 'selected' if base_currency == 'CAD' else '' }}>CAD</option>
+                </select>
+
+                <label for="TARGET_CURRENCY">Target Currency:</label>
+                <select name="TARGET_CURRENCY">
+                    <option value="EUR" {{ 'selected' if target_currency == 'EUR' else '' }}>EURO</option>
+                    <option value="ZAR" {{ 'selected' if target_currency == 'ZAR' else '' }}>ZAR</option>
+                    <option value="USD" {{ 'selected' if target_currency == 'USD' else '' }}>USD</option>
+                    <option value="CAD" {{ 'selected' if target_currency == 'CAD' else '' }}>CAD</option>
+                </select>
+
             <input type="submit" value="Apply Settings">
         </form>
     </div>
