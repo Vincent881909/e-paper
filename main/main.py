@@ -27,7 +27,7 @@ def main_script():
         config,config_file_path = currency_api.get_config_object()
         config.read(config_file_path)
 
-        current_rate, conversion_date = currency_api.get_exchange_rate(datetime.datetime.now() - datetime.timedelta(days=1))
+        current_rate, conversion_date = currency_api.get_exchange_rate(datetime.datetime.now())
         currency_trend = currency_api.fetch_currency_trend(int(config['DEFAULT']['TREND_IN_WEEKS']))
         trend_percentage_change = currency_api.trend_value(int(config['DEFAULT']['TREND_IN_WEEKS']))
         logger.info("Data has been fetched")

@@ -75,7 +75,7 @@ def get_exchange_rate(date):
 
 
 def fetch_currency_trend(weeks_duration):
-    end_date = datetime.datetime.now() - datetime.timedelta(days=1)
+    end_date = datetime.datetime.now()
     start_date = end_date - datetime.timedelta(weeks=weeks_duration)
     num_days = (end_date - start_date).days
     dates = []
@@ -90,7 +90,7 @@ def fetch_currency_trend(weeks_duration):
 
 
 def trend_value(weeks_duration):
-    todays_date = datetime.date.today() - datetime.timedelta(days=1)
+    todays_date = datetime.date.today()
     start_date = todays_date - datetime.timedelta(weeks=weeks_duration)
     old_rate = get_exchange_rate(start_date)[0]
     todays_rate = get_exchange_rate(todays_date)[0]
