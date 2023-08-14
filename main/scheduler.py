@@ -3,7 +3,6 @@ import time
 from datetime import datetime
 import os,sys
 import subprocess
-
 from main import main_script 
 
 # Directories
@@ -28,12 +27,11 @@ if __name__ == "__main__":
     # Initial run
     run_task()
 
-    # Start the Flask app in the background
     logger.debug(os.path.join(WEB_DIR, "app.py"))
-    subprocess.Popen(["python3", os.path.join(WEB_DIR, "app.py")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = subprocess.Popen(["python3", os.path.join(WEB_DIR, "app.py")])
 
-    # Set up the scheduler for the midnight task
-    schedule.every().day.at("00:00").do(run_task)
+    #Scheduled Task
+    schedule.every().day.at("06:00").do(run_task)
 
     while True:
         schedule.run_pending()
