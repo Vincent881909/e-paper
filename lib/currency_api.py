@@ -1,6 +1,8 @@
 import os
 import datetime
 import requests
+import redis
+import json
 
 API_KEY = os.environ.get('CURRENCY_API_KEY')
 BASE_CURRENCY = "EUR" # Default Value
@@ -13,18 +15,32 @@ CURRENCY_SYMBOLS = {
     'USD': '\u0024'   # United States Dollar
 }
 
+REDIS_CLIENT = redis.Redis(host='localhost', port=6379, db=0)
+
 def timestamp_to_date(timestamp):
     date = datetime.datetime.fromtimestamp(timestamp)
     return date.strftime('%a %d %B %Y')
 
 def get_exchange_rate(date):
     date = date.strftime('%Y-%m-%d')
-    url = f'http://api.exchangeratesapi.io/v1/{date}?access_key={API_KEY}&base={BASE_CURRENCY}&symbols={TARGET_CURRENCY}'
-    request = requests.get(url)
-    request.raise_for_status()
-    received_data = request.json()
-    exchange_rate = received_data['rates'][TARGET_CURRENCY]
-    timestamp = received_data['timestamp']
+
+    client_key = f'{BASE_CURRENCY}:{TARGET_CURRENCY}:{date}'
+    data = REDIS_CLIENT.get(client_key)
+
+    if data is None:
+        print(f'Client Key: {client_key} does not exist. API call initiated.')
+        url = f'http://api.exchangeratesapi.io/v1/{date}?access_key={API_KEY}&base={BASE_CURRENCY}&symbols={TARGET_CURRENCY}'
+        request = requests.get(url)
+        request.raise_for_status()
+        data = request.json()
+        seconds_in_six_months = 6 * 30 * 24 * 60 * 60
+        REDIS_CLIENT.setex(client_key, seconds_in_six_months, json.dumps(data))
+    else:
+        print(f'Client Key: {client_key} exists. Caching used.')
+        data = json.loads(data)
+
+    exchange_rate = data['rates'][TARGET_CURRENCY]
+    timestamp = data['timestamp']
     date = timestamp_to_date(timestamp)
     return round(exchange_rate,2), date
 
