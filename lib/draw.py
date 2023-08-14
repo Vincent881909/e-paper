@@ -61,6 +61,7 @@ def change_in_rate(value, draw_object):
 
 
 def exchange_rate(draw_obj_black, draw_obj_red, change_in_rate, exchange_rate, target_symbol):
+    target_symbol = decode_symbol(target_symbol)
     draw_obj = draw_obj_black
     if(change_in_rate) <= 0: draw_obj = draw_obj_red
     draw_obj.text((105, 104), f'{str(exchange_rate)} {target_symbol}', font=IBM_18, fill=0)
@@ -93,3 +94,6 @@ def delete_png_bmp_files():
             except FileNotFoundError:
                 logger.error(f"File not found: {filename}")
 
+
+def decode_symbol(s):
+    return bytes(s, 'ascii').decode('unicode-escape')

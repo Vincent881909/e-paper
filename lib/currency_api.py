@@ -3,20 +3,17 @@ import datetime
 import requests
 import redis
 import json
+import configparser
 from logger import logger
 
 API_KEY = os.environ.get('CURRENCY_API_KEY')
 if not API_KEY: logger.error("CURRENCY_API_KEY environment variable not found!")
 
-BASE_CURRENCY = "EUR" # Default Value
-TARGET_CURRENCY = "ZAR" # Default Value
-TREND_IN_WEEKS = 4 # Default Value
-CURRENCY_SYMBOLS = {
-    'ZAR': '\u0052',  # South African Rand 
-    'CAD': '\u0024',  # Canadian Dollar
-    'EUR': '\u20AC',  # Euro
-    'USD': '\u0024'   # United States Dollar
-}
+curr_dir = os.path.dirname(os.path.realpath(__file__))
+root_dir = os.path.dirname(curr_dir)
+config_file_path = os.path.join(root_dir, "main", "config.cfg")
+config = configparser.ConfigParser()
+config.read(config_file_path)
 
 REDIS_CLIENT = redis.Redis(host='localhost', port=6379, db=0)
 
@@ -27,18 +24,18 @@ def timestamp_to_date(timestamp):
 def get_exchange_rate(date):
     try:
         date = date.strftime('%Y-%m-%d')
-        client_key = f'{BASE_CURRENCY}:{TARGET_CURRENCY}:{date}'
+        client_key = f'{config["DEFAULT"]["BASE_CURRENCY"]}:{config["DEFAULT"]["TARGET_CURRENCY"]}:{date}'
         data = REDIS_CLIENT.get(client_key)
 
         if data is None:
             logger.debug(f'Client Key: {client_key} does not exist. API call initiated.')
-            url = f'http://api.exchangeratesapi.io/v1/{date}?access_key={API_KEY}&base={BASE_CURRENCY}&symbols={TARGET_CURRENCY}'
+            url = f'http://api.exchangeratesapi.io/v1/{date}?access_key={API_KEY}&base={config["DEFAULT"]["BASE_CURRENCY"]}&symbols={config["DEFAULT"]["TARGET_CURRENCY"]}'
             
             response = requests.get(url)
             response.raise_for_status()  
             data = response.json()
             
-            if 'rates' not in data or TARGET_CURRENCY not in data['rates']:
+            if 'rates' not in data or config["DEFAULT"]["TARGET_CURRENCY"] not in data['rates']:
                 logger.error(f"Unexpected API response structure: {data}")
                 return None, None
 
@@ -49,7 +46,7 @@ def get_exchange_rate(date):
             logger.debug(f'Client Key: {client_key} exists. Caching used.')
             data = json.loads(data)
 
-        exchange_rate = data['rates'][TARGET_CURRENCY]
+        exchange_rate = data['rates'][config["DEFAULT"]["TARGET_CURRENCY"]]
         timestamp = data['timestamp']
         date = timestamp_to_date(timestamp)
 
