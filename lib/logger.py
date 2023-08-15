@@ -5,7 +5,7 @@ logger.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.DEBUG)
-error_file_handler = logging.FileHandler('app_error.log')
+error_file_handler = logging.FileHandler('/home/vincent/e-paper/lib/app_error.log')
 error_file_handler.setLevel(logging.ERROR) 
 
 console_formatter = logging.Formatter('%(asctime)s - %(filename)s - %(levelname)s - %(message)s')
