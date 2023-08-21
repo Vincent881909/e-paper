@@ -23,10 +23,7 @@ def main_script():
         logger.info("Init and Clear")
         epd.init()
         epd.Clear()
-        epd.Clear()
-        epd.Clear()
-        epd.Clear()
-        epd.Clear()
+        epd2in9b_V3.epdconfig.module_exit()
 
         config,config_file_path = currency_api.get_config_object()
         config.read(config_file_path)
