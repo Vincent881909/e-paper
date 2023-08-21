@@ -21,11 +21,11 @@ def main_script():
         
         epd = epd2in9b_V3.EPD()
         logger.info("Init and Clear")
-        epd.Clear()
-        epd.Clear()
-        epd.Clear()
-        epd.Clear()
         epd.init()
+        epd.Clear()
+        epd.Clear()
+        epd.Clear()
+        epd.Clear()
         epd.Clear()
 
         config,config_file_path = currency_api.get_config_object()
