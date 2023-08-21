@@ -24,6 +24,7 @@ def main_script():
         epd.init()
         epd.Clear()
         epd2in9b_V3.epdconfig.module_exit()
+        exit()
 
         config,config_file_path = currency_api.get_config_object()
         config.read(config_file_path)
