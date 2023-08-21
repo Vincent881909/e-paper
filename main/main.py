@@ -21,7 +21,10 @@ def main_script():
         
         epd = epd2in9b_V3.EPD()
         logger.info("Init and Clear")
-        epd.reset()
+        epd.Clear()
+        epd.Clear()
+        epd.Clear()
+        epd.Clear()
         epd.init()
         epd.Clear()
 
@@ -40,6 +43,7 @@ def main_script():
         draw.date_of_conversion(draw_black,conversion_date)
         draw.trend_graph(currency_trend,black_image)
         epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image)) 
+        epd.sleep()
 
         logger.info("Data has been displayed")
         logger.info("Script re-executed at midnight or until refreshed via web-gui")
