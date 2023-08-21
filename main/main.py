@@ -21,6 +21,7 @@ def main_script():
         
         epd = epd2in9b_V3.EPD()
         logger.info("Init and Clear")
+        epd.reset()
         epd.init()
         epd.Clear()
 
