@@ -16,7 +16,7 @@ except IOError as e:
 def create_plot(exchange_rates, dates):
     try:
         fig, ax = plt.subplots(dpi=300)
-        ax.plot(dates, exchange_rates, marker='o')
+        ax.plot(dates, exchange_rates, marker='o', linestyle='-', linewidth=4)
         ax.axis('off')
         plt.grid(False)
         plt.savefig('currency_trend.png', dpi=300, bbox_inches='tight', pad_inches=0)
