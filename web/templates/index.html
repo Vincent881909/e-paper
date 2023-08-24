@@ -13,6 +13,8 @@
                     <option value="ZAR" {{ 'selected' if base_currency == 'ZAR' else '' }}>ZAR</option>
                     <option value="USD" {{ 'selected' if base_currency == 'USD' else '' }}>USD</option>
                     <option value="CAD" {{ 'selected' if base_currency == 'CAD' else '' }}>CAD</option>
+                    <option value="GBP" {{ 'selected' if base_currency == 'GBP' else '' }}>GBP</option>
+                    <option value="CHF" {{ 'selected' if base_currency == 'CHF' else '' }}>CHF</option>
                 </select>
 
                 <label for="TARGET_CURRENCY">Target Currency:</label>
@@ -21,6 +23,8 @@
                     <option value="ZAR" {{ 'selected' if target_currency == 'ZAR' else '' }}>ZAR</option>
                     <option value="USD" {{ 'selected' if target_currency == 'USD' else '' }}>USD</option>
                     <option value="CAD" {{ 'selected' if target_currency == 'CAD' else '' }}>CAD</option>
+                    <option value="CHF" {{ 'selected' if target_currency == 'CHF' else '' }}>CHF</option>
+                    <option value="GBP" {{ 'selected' if target_currency == 'GBP' else '' }}>GBP</option>
                 </select>
 
             <input type="submit" value="Apply Settings">
