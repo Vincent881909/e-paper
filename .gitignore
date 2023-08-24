@@ -17,3 +17,6 @@ venv/
 
 #Log files
 *.log
+
+#Redis DB
+*.rdb
