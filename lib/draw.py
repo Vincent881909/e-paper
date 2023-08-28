@@ -40,12 +40,10 @@ def conduct_image_processing():
 
 
 def init_canvas(height, width):
-    black_image = Image.new('1', (height, width), 255) 
-    red_image = Image.new('1', (height, width), 255)
-    draw_black = ImageDraw.Draw(black_image)
-    draw_red = ImageDraw.Draw(red_image)
+    Himage = Image.new('1', (height, width), 255)  
+    draw = ImageDraw.Draw(Himage)
 
-    return draw_black,draw_red,black_image,red_image
+    return draw, Himage
 
 
 def currency_labels(draw_obj, base_currency, target_currency):
@@ -60,11 +58,9 @@ def change_in_rate(value, draw_object):
     draw_object.text((205, 106), f'{sign}{value} %', font=VARELA_ROUND_18, fill=0)
 
 
-def exchange_rate(draw_obj_black, draw_obj_red, change_in_rate, exchange_rate, target_symbol):
+def exchange_rate(draw_object, change_in_rate, exchange_rate, target_symbol):
     target_symbol = decode_symbol(target_symbol)
-    draw_obj = draw_obj_black
-    if(change_in_rate) <= 0: draw_obj = draw_obj_red
-    draw_obj.text((105, 104), f'{str(exchange_rate)} {target_symbol}', font=IBM_18, fill=0)
+    draw_object.text((105, 104), f'{str(exchange_rate)} {target_symbol}', font=IBM_18, fill=0)
 
 
 def date_of_conversion(draw_obj, date):
