@@ -1,4 +1,5 @@
 # E-Paper Currency Tracker
+Python-based project displays real-time currency exchange rates on an e-paper screen, housed in a custom-crafted wooden box.
 
 ## Overview
 Welcome to my e-Paper Currency Tracker Project! This project is designed to fetch and display currency exchange rates on an e-paper display. It's built using Python and integrates various technologies to create a seamless and efficient user experience. The project is perfect for anyone interested in hardware interfacing, web development, or financial data visualization. In addtion, I created a self-creafted wooden box to fit the e-paper as well as the Raspberry Pi Zero to make it a great addition to a desk.
